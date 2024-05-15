@@ -1,52 +1,44 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Header from "./Header";
+import PizzaForm from "./PizzaForm";
+import PizzaList from "./PizzaList";
 
-function PizzaForm() {
+function App() {
+  const [pizzas, setPizzas] = useState([]);
+  const [selectedPizza, setSelectedPizza] = useState(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3001/pizzas")
+      .then((r) => r.json())
+      .then(setPizzas);
+  }, []);
+
+  function handleChangeForm(name, value) {
+    setSelectedPizza({
+      ...selectedPizza,
+      [name]: value,
+    });
+  }
+
+  function handleEditPizza(updatedPizza) {
+    const updatedPizzas = pizzas.map((pizza) =>
+      pizza.id === updatedPizza.id ? updatedPizza : pizza
+    );
+    setSelectedPizza(updatedPizza);
+    setPizzas(updatedPizzas);
+  }
+
   return (
-    <form onSubmit={null /*handle that submit*/}>
-      <div className="form-row">
-        <div className="col-5">
-          <input
-            className="form-control"
-            type="text"
-            name="topping"
-            placeholder="Pizza Topping"
-          />
-        </div>
-        <div className="col">
-          <select className="form-control" name="size">
-            <option value="Small">Small</option>
-            <option value="Medium">Medium</option>
-            <option value="Large">Large</option>
-          </select>
-        </div>
-        <div className="col">
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="vegetarian"
-              value="Vegetarian"
-            />
-            <label className="form-check-label">Vegetarian</label>
-          </div>
-          <div className="form-check">
-            <input
-              className="form-check-input"
-              type="radio"
-              name="vegetarian"
-              value="Not Vegetarian"
-            />
-            <label className="form-check-label">Not Vegetarian</label>
-          </div>
-        </div>
-        <div className="col">
-          <button type="submit" className="btn btn-success">
-            Submit
-          </button>
-        </div>
-      </div>
-    </form>
+    <>
+      <Header />
+      <PizzaForm
+        pizza={selectedPizza}
+        onChangeForm={handleChangeForm}
+        onEditPizza={handleEditPizza}
+      />
+      <PizzaList pizzas={pizzas} onSelectPizza={setSelectedPizza} />
+    </>
   );
 }
 
-export default PizzaForm;
+export default App;

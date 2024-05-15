@@ -1,7 +1,15 @@
 import React from "react";
 import Pizza from "./Pizza";
 
-function PizzaList() {
+
+
+
+function PizzaList({pizzas, onSelectPizza}) {
+
+  const pizzaRows = pizzas.map((pizza)=>{
+    return <Pizza key={pizza.id} pizza={pizza} onSelectPizza={onSelectPizza}/>
+  })
+
   return (
     <table className="table table-striped">
       <thead>
@@ -14,7 +22,7 @@ function PizzaList() {
       </thead>
       <tbody>
         {
-          //render Pizza here
+          pizzaRows
         }
       </tbody>
     </table>
